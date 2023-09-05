@@ -27,33 +27,3 @@
     <mat-icon>delete</mat-icon>
   </button>
 </div>
-
-<ng-container contenido>
-  <table
-    #table
-    mat-table
-    [dataSource]="favoritesUsers"
-    class="mat-elevation-z8 tabla-indice"
-  >
-    <ng-container matColumnDef="Name">
-      <th mat-header-cell *matHeaderCellDef>Name</th>
-      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="Actions">
-      <th mat-header-cell *matHeaderCellDef>Acciones</th>
-      <td mat-cell *matCellDef="let element">
-        <button
-          mat-flat-button
-          color="warn"
-          (confirm)="deleteFavorite(element.username)"
-        >
-          Delete
-        </button>
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="columnasMostrar"></tr>
-    <tr mat-row *matRowDef="let row; columns: columnasMostrar"></tr>
-  </table>
-</ng-container>

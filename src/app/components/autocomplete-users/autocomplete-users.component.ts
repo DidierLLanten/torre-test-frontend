@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { UsersService } from 'src/app/users.service';
 
 @Component({
   selector: 'app-autocomplete-users',
@@ -8,93 +9,11 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
   styleUrls: ['./autocomplete-users.component.css'],
 })
 export class AutocompleteUsersComponent implements OnInit {
-  constructor() {}
+  constructor(private usersService: UsersService) {}
 
   columnasMostrar = ['Name', 'Actions'];
 
   control: FormControl = new FormControl();
-
-  users = [
-    {
-      name: 'Didier Andres LLantén Velez',
-      username: 'didiervelez',
-      professionalHeadline: 'Ingenieria de Software',
-      imageUrl:
-        'https://res.cloudinary.com/torre-technologies-co/image/upload/c_fill,h_150,w_150/v0/origin/starrgate/users/profile_38b209652c47253e125d5678ec5b46bd6d525995.jpg',
-    },
-    {
-      name: 'Alexander Torrenegra',
-      professionalHeadline: 'Head of Torre',
-      username: 'torrenegra',
-      imageUrl:
-        'https://res.cloudinary.com/torre-technologies-co/image/upload/c_fill,h_150,w_150/v0/origin/starrgate/users/profile_bd307a3ec329e10a2cff8fb87480823da114f8f4.jpg',
-    },
-    {
-      name: 'Didier Ramos',
-      username: 'didier58',
-      professionalHeadline: 'Manager of Talent Acquisition',
-      imageUrl:
-        'https://res.cloudinary.com/torre-technologies-co/image/upload/c_fill,h_150,w_150/v1631275794/origin/starrgate/users/profile_413c94f7058382b8814043b090060bf59492db61.jpg',
-    },
-    {
-      name: 'Didier Alexander  Revelo',
-      username: 'didierrevelo',
-      professionalHeadline: 'Desarrollador de software',
-      imageUrl:
-        'https://res.cloudinary.com/torre-technologies-co/image/upload/c_fill,h_150,w_150/v1682731438/origin/starrgate/users/profile_e1d078a3ba5aa8b1c80e4e29441e5548e2ed9ff8.jpg',
-    },
-    {
-      name: 'Didier Benjumea',
-      username: 'didierbenjumea',
-      professionalHeadline:
-        'MBA, Engineer, Tech lead, experience on IT for e-business',
-      imageUrl:
-        'https://res.cloudinary.com/torre-technologies-co/image/upload/c_fill,h_150,w_150/v0/origin/starrgate/users/profile_8e3c8d91dcc57263455d1dabfb4ced9a6dd6bbdc.jpg',
-    },
-    {
-      name: 'Didier Emilson Carabali Loboa',
-      username: 'didiercarabali',
-      professionalHeadline:
-        'MBA | Master Data Manager | SAP | Supply Chain | Quality | Project Management',
-      imageUrl:
-        'https://res.cloudinary.com/torre-technologies-co/image/upload/c_fill,h_150,w_150/v1639348889/origin/starrgate/users/profile_b2164a20396a2cbee12bbf1f98fd9075e8d2713a.jpg',
-    },
-    {
-      name: 'Didier Vera Otalvaro',
-      username: 'didierverao',
-      professionalHeadline: 'Mobile and web Senior Application Developer',
-      imageUrl:
-        'https://res.cloudinary.com/torre-technologies-co/image/upload/c_fill,h_150,w_150/v1654910259/origin/starrgate/users/profile_62e3462eddd022a22f4ed159fb842362cddb4a82.jpg',
-    },
-    {
-      name: 'Didier Hernandez',
-      username: 'didierhernandez',
-      professionalHeadline: 'Full Stack Software Developer',
-      imageUrl:
-        'https://res.cloudinary.com/torre-technologies-co/image/upload/c_fill,h_150,w_150/v0/origin/starrgate/users/profile_1870f8d9df347324cf3af70fe8a556ea3061e63b.jpg',
-    },
-    {
-      name: 'Didier Janinton Cuetia Tombe',
-      username: 'chato1337',
-      professionalHeadline: 'Desarrollador Javascript Fullstack',
-      imageUrl:
-        'https://res.cloudinary.com/torre-technologies-co/image/upload/c_fill,h_150,w_150/v0/origin/starrgate/users/profile_e9d36e9a54507d2825ac99a9546e5cd00a5780b6.jpg',
-    },
-    {
-      name: 'Didier Andrés Potes Herrera',
-      username: 'andretypotes',
-      professionalHeadline: 'Operario',
-      imageUrl:
-        'https://res.cloudinary.com/torre-technologies-co/image/upload/c_fill,h_150,w_150/v1682452520/origin/starrgate/users/profile_25825ba1c63177d6fd5640b64f9d72f40106c722.jpg',
-    },
-    {
-      name: 'Didier Zuñiga',
-      username: 'didier35',
-      professionalHeadline: 'Software Developer',
-      imageUrl:
-        'https://res.cloudinary.com/torre-technologies-co/image/upload/c_fill,h_150,w_150/v0/origin/starrgate/users/profile_1d43d817f1152804fba47f745d19ed7dbaef7419.jpg',
-    },
-  ];
 
   defaultUserHistory = [
     {
@@ -173,26 +92,35 @@ export class AutocompleteUsersComponent implements OnInit {
     },
   ];
 
-  userHistory = this.defaultUserHistory;
+  userHistory = [];
 
-  showUsers = this.userHistory;
+  showUsers = [];
 
   favoritesUsers = [];
 
   isFavorite = false;
 
   ngOnInit(): void {
-    this.control.valueChanges.subscribe((stringSearch) => {
-      if (typeof stringSearch === 'string') {
-        if (stringSearch === '') {
-          this.showUsers = this.userHistory;
-        } else {
-          stringSearch = stringSearch.toLowerCase();
-          this.showUsers = this.users;
-          this.showUsers = this.showUsers.filter(
-            (user) => user.name.toLowerCase().indexOf(stringSearch) !== -1
-          );
-        }
+    const historyStorage = this.getHistoryLocalStorage();
+    if (historyStorage) {
+      this.userHistory = historyStorage;
+    } else {
+      this.userHistory = this.defaultUserHistory;
+    }
+    this.showUsers = this.userHistory;
+    this.control.valueChanges.subscribe((nombre) => {
+      if (typeof nombre === 'string') {
+        this.usersService.searchUsers(nombre).subscribe(
+          (actores) => {
+            this.showUsers = actores;
+            if (nombre === '') {
+              this.showUsers = this.userHistory;
+            }
+          },
+          (error) => {
+            console.error('Error en autocompleteOnInit: ', error);
+          }
+        );
       }
     });
   }
@@ -204,11 +132,11 @@ export class AutocompleteUsersComponent implements OnInit {
     if (this.userHistory.length === 10) {
       this.userHistory.pop();
     }
-    this.userHistory.unshift(event.option.value);
-    console.log('Usuarios historial: ', this.userHistory);
+    this.userHistory.unshift(event.option.value);   
 
     this.control.patchValue('');
     if (!this.isFavorite) {
+      this.saveHistoryLocalStorage();
       window.open(`https://torre.ai/${event.option.value.username}`, '_blank');
     }
     this.isFavorite = false;
@@ -228,5 +156,14 @@ export class AutocompleteUsersComponent implements OnInit {
     this.favoritesUsers = this.favoritesUsers.filter(
       (user) => user.username !== username
     );
+  }
+
+  saveHistoryLocalStorage() {
+    const defaultUserHistoryStr = JSON.stringify(this.userHistory);
+    localStorage.setItem('historySearch', defaultUserHistoryStr);
+  }
+
+  getHistoryLocalStorage() {
+    return JSON.parse(localStorage.getItem('historySearch'));
   }
 }
