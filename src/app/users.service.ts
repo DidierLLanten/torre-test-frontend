@@ -10,12 +10,16 @@ export class UsersService {
 
   private apiURL = 'https://localhost:7118/api/users';
 
-  public searchUsers(nombre: string): Observable<any> {
+  public obtenerPorNombre(nombre: string): Observable<any> {
     const headers = new HttpHeaders('Content-Type: application/json');
     return this.http.post(
       `${this.apiURL}/buscarPorNombre`,
       JSON.stringify(nombre),
       { headers }
     );
+  }
+
+  public addFavorite(user: any) {
+    return this.http.post(this.apiURL, user);
   }
 }

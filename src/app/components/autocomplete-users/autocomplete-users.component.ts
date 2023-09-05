@@ -101,18 +101,24 @@ export class AutocompleteUsersComponent implements OnInit {
   isFavorite = false;
 
   ngOnInit(): void {
-    const historyStorage = this.getHistoryLocalStorage();
+    const historyStorage = this.getHistoryLocalStorage('historySearch');
+    const favoriteUsersStorage = this.getHistoryLocalStorage('favoriteUsers');
     if (historyStorage) {
       this.userHistory = historyStorage;
     } else {
       this.userHistory = this.defaultUserHistory;
     }
+
+    if (favoriteUsersStorage) {
+      this.favoritesUsers = favoriteUsersStorage;
+    }
+
     this.showUsers = this.userHistory;
     this.control.valueChanges.subscribe((nombre) => {
       if (typeof nombre === 'string') {
-        this.usersService.searchUsers(nombre).subscribe(
+        this.usersService.obtenerPorNombre(nombre).subscribe(
           (actores) => {
-            this.showUsers = actores;
+            this.showUsers = actores.$values;
             if (nombre === '') {
               this.showUsers = this.userHistory;
             }
@@ -132,11 +138,11 @@ export class AutocompleteUsersComponent implements OnInit {
     if (this.userHistory.length === 10) {
       this.userHistory.pop();
     }
-    this.userHistory.unshift(event.option.value);   
+    this.userHistory.unshift(event.option.value);
 
     this.control.patchValue('');
     if (!this.isFavorite) {
-      this.saveHistoryLocalStorage();
+      this.saveHistoryLocalStorage('historySearch', this.userHistory);
       window.open(`https://torre.ai/${event.option.value.username}`, '_blank');
     }
     this.isFavorite = false;
@@ -150,20 +156,29 @@ export class AutocompleteUsersComponent implements OnInit {
     if (!!!userExists) {
       this.favoritesUsers.push(user);
     }
+
+    this.usersService.addFavorite(user).subscribe(
+      (actores) => {},
+      (error) => {
+        console.error('Error en autocompleteOnInit: ', error);
+      }
+    );
+    this.saveHistoryLocalStorage('favoriteUsers', this.favoritesUsers);
   }
 
   deleteFavorite(username: string) {
     this.favoritesUsers = this.favoritesUsers.filter(
       (user) => user.username !== username
     );
+    this.saveHistoryLocalStorage('favoriteUsers', this.favoritesUsers);
   }
 
-  saveHistoryLocalStorage() {
-    const defaultUserHistoryStr = JSON.stringify(this.userHistory);
-    localStorage.setItem('historySearch', defaultUserHistoryStr);
+  saveHistoryLocalStorage(key: string, value: object) {
+    const defaultUserHistoryStr = JSON.stringify(value);
+    localStorage.setItem(key, defaultUserHistoryStr);
   }
 
-  getHistoryLocalStorage() {
-    return JSON.parse(localStorage.getItem('historySearch'));
+  getHistoryLocalStorage(key: string) {
+    return JSON.parse(localStorage.getItem(key));
   }
 }

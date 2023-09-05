@@ -30,3 +30,7 @@ mat-option:hover {
 mat-icon {
   color: #010101;
 }
+
+.container{
+  margin: 20px
+}
