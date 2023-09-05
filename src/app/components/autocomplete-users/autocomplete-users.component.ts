@@ -8,6 +8,10 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
   styleUrls: ['./autocomplete-users.component.css'],
 })
 export class AutocompleteUsersComponent implements OnInit {
+  constructor() {}
+
+  columnasMostrar = ['Name', 'Actions'];
+
   control: FormControl = new FormControl();
 
   users = [
@@ -97,7 +101,7 @@ export class AutocompleteUsersComponent implements OnInit {
       name: 'Alexander Torrenegra',
       username: 'torrenegra',
       professionalHeadline:
-        'Head of Torre. Co-founder of Tribe, Bunny Studio, and Voice123. Shark at Shark Tank in LatAm.',
+        'Head of Torre. Co-fotrue of Tribe, Bunny Studio, and Voice123. Shark at Shark Tank in LatAm.',
       imageUrl:
         'https://res.cloudinary.com/torre-technologies-co/image/upload/c_fill,h_150,w_150/v0/origin/starrgate/users/profile_bd307a3ec329e10a2cff8fb87480823da114f8f4.jpg',
     },
@@ -173,6 +177,10 @@ export class AutocompleteUsersComponent implements OnInit {
 
   showUsers = this.userHistory;
 
+  favoritesUsers = [];
+
+  isFavorite = false;
+
   ngOnInit(): void {
     this.control.valueChanges.subscribe((stringSearch) => {
       if (typeof stringSearch === 'string') {
@@ -197,8 +205,28 @@ export class AutocompleteUsersComponent implements OnInit {
       this.userHistory.pop();
     }
     this.userHistory.unshift(event.option.value);
+    console.log('Usuarios historial: ', this.userHistory);
 
     this.control.patchValue('');
-    window.open(`https://torre.ai/${event.option.value.username}`, '_blank');
+    if (!this.isFavorite) {
+      window.open(`https://torre.ai/${event.option.value.username}`, '_blank');
+    }
+    this.isFavorite = false;
+  }
+
+  addFavorite(user: any) {
+    this.isFavorite = true;
+    let userExists = this.favoritesUsers.find(
+      (favoriteUser) => favoriteUser.username === user.username
+    );
+    if (!!!userExists) {
+      this.favoritesUsers.push(user);
+    }
+  }
+
+  deleteFavorite(username: string) {
+    this.favoritesUsers = this.favoritesUsers.filter(
+      (user) => user.username !== username
+    );
   }
 }

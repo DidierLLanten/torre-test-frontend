@@ -7,12 +7,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {MaterialModule} from './material/material.module';
-import { AutocompleteUsersComponent } from './components/autocomplete-users/autocomplete-users.component'
+import { AutocompleteUsersComponent } from './components/autocomplete-users/autocomplete-users.component';
+import { FavoriteUsersComponent } from './components/favorite-users/favorite-users.component'
 
 @NgModule({
   declarations: [
     AppComponent,
-    AutocompleteUsersComponent
+    AutocompleteUsersComponent,
+    FavoriteUsersComponent
   ],
   imports: [
     BrowserModule,
