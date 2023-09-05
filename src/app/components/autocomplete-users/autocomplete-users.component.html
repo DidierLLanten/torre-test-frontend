@@ -1,0 +1,17 @@
+<form>
+  <mat-form-field [color]="'primary'" style="margin-top: 10px">
+    <mat-label>Search people by name</mat-label>
+    <input
+      type="text"      
+      matInput
+      [formControl]="control"
+      [matAutocomplete]="auto"      
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+  <mat-autocomplete #auto (optionSelected)="optionSelected($event)">
+    <mat-option *ngFor="let user of showUsers" [value]="user">
+      <img [src]="user.imageUrl" />{{ user.name }}
+    </mat-option>
+  </mat-autocomplete>
+</form>

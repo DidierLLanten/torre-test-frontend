@@ -1,0 +1,32 @@
+form {
+  width: 100%;
+  max-width: 500px;
+}
+
+img {
+  vertical-align: middle;
+  margin-right: 8px;
+  width: 35px;
+  height: 45px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+input::placeholder {
+  color: #010101 !important;
+}
+
+mat-option {
+  background-color: #27292c;
+  color: #ffffffa6;
+}
+
+mat-option:hover {
+  background-color: #353638 !important;
+}
+
+mat-icon {
+  color: #010101;
+}
