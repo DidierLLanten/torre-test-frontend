@@ -116,15 +116,15 @@ export class AutocompleteUsersComponent implements OnInit {
     this.showUsers = this.userHistory;
     this.control.valueChanges.subscribe((nombre) => {
       if (typeof nombre === 'string') {
-        this.usersService.obtenerPorNombre(nombre).subscribe(
-          (actores) => {
-            this.showUsers = actores.$values;
+        this.usersService.listar(nombre).subscribe(
+          (data) => {            
+            this.showUsers = data;
             if (nombre === '') {
               this.showUsers = this.userHistory;
             }
           },
           (error) => {
-            console.error('Error en autocompleteOnInit: ', error);
+            console.log('Error en autocompleteOnInit: ', error);
           }
         );
       }
@@ -156,13 +156,6 @@ export class AutocompleteUsersComponent implements OnInit {
     if (!!!userExists) {
       this.favoritesUsers.push(user);
     }
-
-    this.usersService.addFavorite(user).subscribe(
-      (actores) => {},
-      (error) => {
-        console.error('Error en autocompleteOnInit: ', error);
-      }
-    );
     this.saveHistoryLocalStorage('favoriteUsers', this.favoritesUsers);
   }
 
