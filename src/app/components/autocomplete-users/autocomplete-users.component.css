@@ -34,3 +34,8 @@ mat-icon {
 .container{
   margin: 20px
 }
+
+a {
+  text-decoration: none;
+  color: #ffffffa6;
+}
